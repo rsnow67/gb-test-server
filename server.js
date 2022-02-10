@@ -105,6 +105,19 @@ app.post('/auth', jsonParser, (req, res) => {
 	}
 }).all('/auth', callbackStatus405);
 
+app.post('/logout', (req, res) => {
+	res.cookie('userId', user.id, {
+		expires: new Date(Date.now()),
+		maxAge: 0
+	});
+	res.cookie('authorized', false, {
+		expires: new Date(Date.now()),
+		maxAge: 0
+	});
+	res.status(200).send('You are logged out.');
+
+}).all('/logout', callbackStatus405);
+
 app.use((req, res) => {
 	res.status(404).send('Page not found.');
 });

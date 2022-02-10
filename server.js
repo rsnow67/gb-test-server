@@ -55,8 +55,24 @@ app.post('/post', jsonParser, (req, res) => {
 	}
 }).all('/post', callbackStatus405);
 
-app.delete('/delete', (req, res) => {
-	res.status(200).send('Success.');
+app.delete('/delete', jsonParser, (req, res) => {
+	const {
+		userId,
+		authorized
+	} = req.cookies;
+	const {
+		filename
+	} = req.body;
+
+	if (userId == user.id && authorized === 'true') {
+		const pathToFile = path.join(__dirname, `files/${filename}`);
+		fs.unlink(pathToFile, (err) => {
+			if (err) throw err;
+			res.status(200).send(`File ${filename} deleted.`);
+		});
+	} else {
+		res.status(401).send('Access denied. You are not logged in.');
+	}
 }).all('/delete', callbackStatus405);
 
 app.get('/redirect', (req, res) => {
